@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <link rel="icon" href="files/imageedit_1_3054951801.png" type="image/icon type">
+  <title>hadsız</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.6.11/dist/vue.js"></script>
+</head>
+
+<body>
+  <img src="files/Online world-pana.png" id="backgroundImageNoFollowers">
+  <div id="app">
+    <div id="welcomeContainer">
+      <h1 id="welcomeText">Welcome back </h1>
+      <h1 id="welcomeTextUser">{{ user.username }}</h1>
+
+    </div>
+    <button id="continue_button"><b>Continue</b></button>
+  </div>
+
+  <script>
+
+    const app = new Vue({
+      el: '#app',
+      data: {
+        user: {}
+      },
+      mounted() {
+        this.getUsername();
+      },
+      methods: {
+        async getUsername() {
+          try {
+            const urlParams = new URLSearchParams(window.location.search);
+            const userId = urlParams.get('userId');
+            const response = await fetch(`/api/social/users/${userId}`);
+            const data = await response.json();
+            if (response.ok) {
+              this.user = data;
+            } else {
+              console.error(data.message);
+            }
+          } catch (error) {
+            console.error('Error:', error);
+          }
+        }
+      }
+    });
+
+    const contBtn = document.getElementById("continue_button");
+    if (contBtn) {
+      contBtn.addEventListener("click", function () {
+        window.location.href = "feed.html";
+      })
+    }
+
+    fetch('/api/auth/check-auth')
+      .then(res => res.json())
+      .then(data => {
+        if (data.message === 'Not authenticated') {
+          console.log('User is not logged in');
+          alert("You have to sign in first.");
+          window.location.href = "index.html";
+        }
+      })
+      .catch(error => {
+        console.error('Error checking authentication status:', error);
+      });
+
+  </script>
+</body>
+
+</html>

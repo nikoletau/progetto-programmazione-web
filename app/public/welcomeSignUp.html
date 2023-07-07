@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <link rel="icon" href="files/imageedit_1_3054951801.png" type="image/icon type">
+  <title>hadsız</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.6.11/dist/vue.js"></script>
+</head>
+
+<body>
+  <img src="files/Online world-pana.png" id="backgroundImageNoFollowers">
+  <span class="closeWelcome" id="closeWelcome">&times;</span>
+
+  <div id="app">
+    <div id="welcomeContainer">
+      <h1 id="welcomeText">Welcome</h1>
+      <h1 id="welcomeTextUser">{{ user.username }}</h1>
+      <button id="continue_button" onclick="cont()"><b>Sign In</b></button>
+    </div>
+  </div>
+
+  <script>
+
+    const app = new Vue({
+      el: '#app',
+      data: {
+        user: {}
+      },
+      mounted() {
+        this.getUsername();
+
+      },
+      methods: {
+        async getUsername() {
+          try {
+            const urlParams = new URLSearchParams(window.location.search);
+            const username = urlParams.get('userId');
+            const response = await fetch(`/api/social/users/${username}`);
+            const data = await response.json();
+            if (response.ok) {
+              this.user = data;
+            } else {
+              console.error(data.error);
+            }
+          } catch (error) {
+            console.error('Error:', error);
+          }
+        }
+
+      }
+    });
+
+    const closeWelcome = document.getElementById("closeWelcome");
+    if (closeWelcome) {
+      closeWelcome.addEventListener("click", function () {
+        window.location.href = "index.html";
+      });
+    }
+
+
+    function cont() {
+      window.location.href = "signIn.html";
+    }
+  </script>
+</body>
+
+</html>
